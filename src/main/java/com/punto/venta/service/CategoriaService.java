@@ -11,17 +11,55 @@ import com.punto.venta.repository.CategoriaRepository;
 
 @Service
 public class CategoriaService {
-private CategoriaRepository categoriaRepository;
+
+    private final CategoriaRepository categoriaRepository;
 
     public CategoriaService(CategoriaRepository categoriaRepository){
         this.categoriaRepository = categoriaRepository;
     }
-public List<CategoriaDTO> findAll() {
+
+    public List<CategoriaDTO> findAll() {
         return categoriaRepository.findAll()
                 .stream()
                 .map(this::convertirDTO)
                 .collect(Collectors.toList());
-            
+    }
+
+    public CategoriaDTO save(CategoriaDTO categoriaDTO) {
+        Categoria categoria = convertToEntity(categoriaDTO);
+        Categoria savedCategoria = categoriaRepository.save(categoria);
+        return convertirDTO(savedCategoria);
+    }
+
+    public void eliminarCategoria(Integer idCategoria){
+        if(!categoriaRepository.existsById(idCategoria)){
+            throw new RuntimeException("La categoria no existe con id " + idCategoria);
+        }
+        categoriaRepository.deleteById(idCategoria);
+    }
+
+    public CategoriaDTO anularCategoria(Integer idCategoria){
+        Categoria categoria = categoriaRepository.findById(idCategoria)
+            .orElseThrow(() -> new RuntimeException("La categoria no existe con id " + idCategoria));
+
+        categoria.setEstado(false);
+
+        Categoria savedCategoria = categoriaRepository.save(categoria);
+        return convertirDTO(savedCategoria);
+    }
+
+    public CategoriaDTO modificarCategoria(Integer idCategoria, CategoriaDTO dto) {
+
+        Categoria categoria = categoriaRepository.findById(idCategoria)
+            .orElseThrow(() -> new RuntimeException("La categoria no existe con id " + idCategoria));
+
+        categoria.setNombre(dto.getNombre());
+        categoria.setDescripcion(dto.getDescripcion());
+
+
+        Categoria actualizada = categoriaRepository.save(categoria);
+
+        return convertirDTO(actualizada);
     }
 
     private CategoriaDTO convertirDTO(Categoria categoria) {
@@ -29,12 +67,8 @@ public List<CategoriaDTO> findAll() {
         categoriaDTO.setIdCategoria(categoria.getIdCategoria());
         categoriaDTO.setNombre(categoria.getNombre());
         categoriaDTO.setDescripcion(categoria.getDescripcion());
+        categoriaDTO.setEstado(categoria.getEstado());
         return categoriaDTO;
-    }
-    public CategoriaDTO save(CategoriaDTO categoriaDTO) {
-        Categoria categoria = convertToEntity(categoriaDTO);
-        Categoria savedCategoria = categoriaRepository.save(categoria);
-        return convertirDTO(savedCategoria);
     }
 
     private Categoria convertToEntity (CategoriaDTO dto){
@@ -45,6 +79,4 @@ public List<CategoriaDTO> findAll() {
         categoria.setEstado(true);
         return categoria;
     }
-
-
 }
