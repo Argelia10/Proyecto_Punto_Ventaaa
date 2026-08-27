@@ -16,6 +16,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -40,6 +41,7 @@ public class Categoria implements Serializable {
     @Column(name = "DESCRIPCION")
     private String descripcion;
     @OneToMany(mappedBy = "idCategoria")
+    @JsonIgnore
     private List<Producto> productoList;
 
     public Categoria() {
@@ -81,6 +83,7 @@ public class Categoria implements Serializable {
         this.descripcion = descripcion;
     }
 
+    @JsonIgnore
     public List<Producto> getProductoList() {
         return productoList;
     }

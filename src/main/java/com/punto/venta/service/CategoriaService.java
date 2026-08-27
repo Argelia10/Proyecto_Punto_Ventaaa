@@ -3,7 +3,9 @@ package com.punto.venta.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.punto.venta.dto.CategoriaDTO;
 import com.punto.venta.entity.Categoria;
@@ -14,10 +16,11 @@ public class CategoriaService {
 
     private final CategoriaRepository categoriaRepository;
 
-    public CategoriaService(CategoriaRepository categoriaRepository){
+    public CategoriaService(CategoriaRepository categoriaRepository) {
         this.categoriaRepository = categoriaRepository;
     }
 
+    // GET
     public List<CategoriaDTO> findAll() {
         return categoriaRepository.findAll()
                 .stream()
@@ -25,58 +28,101 @@ public class CategoriaService {
                 .collect(Collectors.toList());
     }
 
+    // POST
     public CategoriaDTO save(CategoriaDTO categoriaDTO) {
+
         Categoria categoria = convertToEntity(categoriaDTO);
-        Categoria savedCategoria = categoriaRepository.save(categoria);
+
+        Categoria savedCategoria =
+                categoriaRepository.save(categoria);
+
         return convertirDTO(savedCategoria);
     }
 
-    public void eliminarCategoria(Integer idCategoria){
-        if(!categoriaRepository.existsById(idCategoria)){
-            throw new RuntimeException("La categoria no existe con id " + idCategoria);
+    // PUT - ACTUALIZAR
+    public CategoriaDTO modificarCategoria(
+            Integer idCategoria,
+            CategoriaDTO dto) {
+
+        Categoria categoriaExistente =
+                categoriaRepository.findById(idCategoria)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Categoria no encontrada"
+                        ));
+
+        if (dto.getNombre() != null) {
+            categoriaExistente.setNombre(dto.getNombre());
         }
+
+        if (dto.getDescripcion() != null) {
+            categoriaExistente.setDescripcion(dto.getDescripcion());
+        }
+
+        if (dto.getEstado() != null) {
+            categoriaExistente.setEstado(dto.getEstado());
+        }
+
+        return convertirDTO(
+                categoriaRepository.save(categoriaExistente)
+        );
+    }
+
+    // DELETE
+    public void eliminarCategoria(Integer idCategoria) {
+
+        if (!categoriaRepository.existsById(idCategoria)) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Categoria no encontrada"
+            );
+        }
+
         categoriaRepository.deleteById(idCategoria);
     }
 
-    public CategoriaDTO anularCategoria(Integer idCategoria){
-        Categoria categoria = categoriaRepository.findById(idCategoria)
-            .orElseThrow(() -> new RuntimeException("La categoria no existe con id " + idCategoria));
+    // ANULAR
+    public CategoriaDTO anularCategoria(Integer idCategoria) {
 
-        categoria.setEstado(false);
+        Categoria categoriaExistente =
+                categoriaRepository.findById(idCategoria)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Categoria no encontrada"
+                        ));
 
-        Categoria savedCategoria = categoriaRepository.save(categoria);
-        return convertirDTO(savedCategoria);
+        categoriaExistente.setEstado(false);
+
+        return convertirDTO(
+                categoriaRepository.save(categoriaExistente)
+        );
     }
 
-    public CategoriaDTO modificarCategoria(Integer idCategoria, CategoriaDTO dto) {
-
-        Categoria categoria = categoriaRepository.findById(idCategoria)
-            .orElseThrow(() -> new RuntimeException("La categoria no existe con id " + idCategoria));
-
-        categoria.setNombre(dto.getNombre());
-        categoria.setDescripcion(dto.getDescripcion());
-
-
-        Categoria actualizada = categoriaRepository.save(categoria);
-
-        return convertirDTO(actualizada);
-    }
-
+    // ENTITY -> DTO
     private CategoriaDTO convertirDTO(Categoria categoria) {
-        CategoriaDTO categoriaDTO = new CategoriaDTO();
-        categoriaDTO.setIdCategoria(categoria.getIdCategoria());
-        categoriaDTO.setNombre(categoria.getNombre());
-        categoriaDTO.setDescripcion(categoria.getDescripcion());
-        categoriaDTO.setEstado(categoria.getEstado());
-        return categoriaDTO;
+
+        CategoriaDTO dto = new CategoriaDTO();
+
+        dto.setIdCategoria(categoria.getIdCategoria());
+        dto.setNombre(categoria.getNombre());
+        dto.setDescripcion(categoria.getDescripcion());
+        dto.setEstado(categoria.getEstado());
+
+        return dto;
     }
 
-    private Categoria convertToEntity (CategoriaDTO dto){
+    // DTO -> ENTITY
+    private Categoria convertToEntity(CategoriaDTO dto) {
+
         Categoria categoria = new Categoria();
-        categoria.setIdCategoria(dto.getIdCategoria());
+
         categoria.setNombre(dto.getNombre());
         categoria.setDescripcion(dto.getDescripcion());
         categoria.setEstado(true);
+
         return categoria;
     }
 }

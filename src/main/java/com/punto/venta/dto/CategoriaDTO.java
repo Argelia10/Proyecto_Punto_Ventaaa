@@ -5,7 +5,7 @@ import lombok.Data;
 
 public class CategoriaDTO {
 private Integer idCategoria;
-private boolean estado;
+private Boolean estado;
 private String nombre;
 private String descripcion;
 }

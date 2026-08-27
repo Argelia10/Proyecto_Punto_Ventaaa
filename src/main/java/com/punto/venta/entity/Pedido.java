@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -53,6 +54,7 @@ public class Pedido implements Serializable {
     @ManyToOne
     private Cliente idCliente;
     @OneToMany(mappedBy = "idPedido")
+    @JsonIgnore
     private List<PedidoDetalle> pedidoDetalleList;
 
     public Pedido() {
@@ -110,6 +112,7 @@ public class Pedido implements Serializable {
         this.idCliente = idCliente;
     }
 
+    @JsonIgnore
     public List<PedidoDetalle> getPedidoDetalleList() {
         return pedidoDetalleList;
     }

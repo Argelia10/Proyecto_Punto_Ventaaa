@@ -12,4 +12,5 @@ public class PedidoDetalleDTO {
     private BigDecimal subtotal;
     private Integer idPedido;
     private Integer idProducto;
+    private Boolean estado;
 }

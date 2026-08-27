@@ -19,6 +19,7 @@ import jakarta.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -51,7 +52,7 @@ public class Cliente implements Serializable {
     private Date fechaRegistro;
     @OneToMany(mappedBy = "idCliente")
     private List<Pedido> pedidoList;
-
+    
     public Cliente() {
     }
 
@@ -114,7 +115,7 @@ public class Cliente implements Serializable {
     public void setFechaRegistro(Date fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
-
+@JsonIgnore
     public List<Pedido> getPedidoList() {
         return pedidoList;
     }

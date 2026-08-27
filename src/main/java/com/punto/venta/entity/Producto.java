@@ -19,7 +19,7 @@ import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  *
  * @author ARGELIA
@@ -51,6 +51,7 @@ public class Producto implements Serializable {
     @ManyToOne
     private Categoria idCategoria;
     @OneToMany(mappedBy = "idProducto")
+    @JsonIgnore
     private List<PedidoDetalle> pedidoDetalleList;
 
     public Producto() {
@@ -116,6 +117,7 @@ public class Producto implements Serializable {
         this.idCategoria = idCategoria;
     }
 
+    @JsonIgnore
     public List<PedidoDetalle> getPedidoDetalleList() {
         return pedidoDetalleList;
     }
