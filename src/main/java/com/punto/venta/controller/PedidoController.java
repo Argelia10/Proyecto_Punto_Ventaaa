@@ -21,117 +21,74 @@ public class PedidoController {
         this.pedidoService = pedidoService;
     }
 
-    // GET
     @GetMapping
     public List<Pedido> getAllPedidos() {
         return pedidoService.findAll();
     }
 
-    // POST
+    // --- ENDPOINTS CORREGIDOS ---
+
+    @GetMapping("/mostrarActivos")
+    public List<PedidoDTO> mostrarActivos() {
+        return pedidoService.mostrarActivos();
+    }
+
+    @GetMapping("/mostrarActivosFiltro")
+    public List<PedidoDTO> mostrarActivosFiltro(@RequestParam Boolean estadoPedido) {
+        return pedidoService.mostrarActivosFiltro(estadoPedido);
+    }
+
+    @GetMapping("/mostrarActivosFiltroTop")
+    public List<PedidoDTO> mostrarActivosFiltroTop(@RequestParam Boolean estadoPedido) {
+        return pedidoService.mostrarActivosFiltroTop(estadoPedido);
+    }
+
+    // ----------------------------
+
     @PostMapping
-    public ResponseEntity<MessageResponse> crearPedido(
-            @RequestBody PedidoDTO pedidoDTO) {
-
+    public ResponseEntity<MessageResponse> crearPedido(@RequestBody PedidoDTO pedidoDTO) {
         try {
-
             pedidoService.save(pedidoDTO);
-
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(new MessageResponse(
-                            "Pedido creado con éxito"
-                    ));
-
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new MessageResponse("Pedido creado con éxito"));
         } catch (Exception e) {
-
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new MessageResponse(
-                            "Error al crear el pedido: "
-                                    + e.getMessage()
-                    ));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new MessageResponse("Error al crear el pedido: " + e.getMessage()));
         }
     }
 
-    // PUT - ACTUALIZAR
     @PutMapping("/{idPedido}")
     public ResponseEntity<MessageResponse> actualizarPedido(
             @PathVariable Integer idPedido,
             @RequestBody PedidoDTO pedidoDTO) {
-
         try {
-
-            pedidoService.actualizar(
-                    idPedido,
-                    pedidoDTO
-            );
-
-            return ResponseEntity.ok(
-                    new MessageResponse(
-                            "Pedido actualizado con éxito"
-                    )
-            );
-
+            pedidoService.actualizar(idPedido, pedidoDTO);
+            return ResponseEntity.ok(new MessageResponse("Pedido actualizado con éxito"));
         } catch (Exception e) {
-
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new MessageResponse(
-                            "Error al actualizar el pedido: "
-                                    + e.getMessage()
-                    ));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new MessageResponse("Error al actualizar el pedido: " + e.getMessage()));
         }
     }
 
-    // DELETE
     @DeleteMapping("/{idPedido}")
-    public ResponseEntity<MessageResponse> eliminarPedido(
-            @PathVariable Integer idPedido) {
-
+    public ResponseEntity<MessageResponse> eliminarPedido(@PathVariable Integer idPedido) {
         try {
-
             pedidoService.eliminar(idPedido);
-
-            return ResponseEntity.ok(
-                    new MessageResponse(
-                            "Pedido eliminado con éxito"
-                    )
-            );
-
+            return ResponseEntity.ok(new MessageResponse("Pedido eliminado con éxito"));
         } catch (Exception e) {
-
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new MessageResponse(
-                            "Error al eliminar el pedido: "
-                                    + e.getMessage()
-                    ));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new MessageResponse("Error al eliminar el pedido: " + e.getMessage()));
         }
     }
 
-    // ANULAR
     @PutMapping("/anular/{idPedido}")
-    public ResponseEntity<MessageResponse> anularPedido(
-            @PathVariable Integer idPedido) {
-
+    public ResponseEntity<MessageResponse> anularPedido(@PathVariable Integer idPedido) {
         try {
-
             pedidoService.anular(idPedido);
-
-            return ResponseEntity.ok(
-                    new MessageResponse(
-                            "Pedido anulado con éxito"
-                    )
-            );
-
+            return ResponseEntity.ok(new MessageResponse("Pedido anulado con éxito"));
         } catch (Exception e) {
-
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new MessageResponse(
-                            "Error al anular el pedido: "
-                                    + e.getMessage()
-                    ));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new MessageResponse("Error al anular el pedido: " + e.getMessage()));
         }
     }
 }

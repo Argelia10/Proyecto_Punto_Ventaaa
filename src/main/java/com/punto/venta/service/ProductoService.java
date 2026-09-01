@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductoService {
@@ -30,6 +31,31 @@ public class ProductoService {
     public List<Producto> findAll() {
         return productoRepository.findAll();
     }
+
+    // --- MÉTODOS AÑADIDOS ---
+
+    public List<ProductoDTO> mostrarActivos() {
+        return productoRepository.findByEstadoTrue()
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductoDTO> mostrarActivosFiltro(String nombre) {
+        return productoRepository.findByEstadoTrueAndNombreContainingIgnoreCase(nombre)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductoDTO> mostrarActivosFiltroTop(String nombre) {
+        return productoRepository.findTop2ByEstadoTrueAndNombreContainingIgnoreCase(nombre)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // ------------------------
 
     // POST
     public Producto save(ProductoDTO dto) {
@@ -128,5 +154,20 @@ public class ProductoService {
         productoExistente.setEstado(false);
 
         return productoRepository.save(productoExistente);
+    }
+
+    // CONVERTIDOR DTO
+    private ProductoDTO convertToDTO(Producto p) {
+        ProductoDTO dto = new ProductoDTO();
+        dto.setIdProducto(p.getIdProducto());
+        dto.setNombre(p.getNombre());
+        dto.setDescripcion(p.getDescripcion());
+        dto.setPrecio(p.getPrecio());
+        dto.setStock(p.getStock());
+        dto.setEstado(p.getEstado());
+        if (p.getIdCategoria() != null) {
+            dto.setIdCategoria(p.getIdCategoria().getIdCategoria());
+        }
+        return dto;
     }
 }

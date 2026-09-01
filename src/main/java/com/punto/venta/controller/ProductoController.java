@@ -27,6 +27,25 @@ public class ProductoController {
         return productoService.findAll();
     }
 
+    // --- NUEVOS ENDPOINTS AÑADIDOS ---
+
+    @GetMapping("/mostrarActivos")
+    public List<ProductoDTO> mostrarActivos() {
+        return productoService.mostrarActivos();
+    }
+
+    @GetMapping("/mostrarActivosFiltro")
+    public List<ProductoDTO> mostrarActivosFiltro(@RequestParam String nombre) {
+        return productoService.mostrarActivosFiltro(nombre);
+    }
+
+    @GetMapping("/mostrarActivosFiltroTop")
+    public List<ProductoDTO> mostrarActivosFiltroTop(@RequestParam String nombre) {
+        return productoService.mostrarActivosFiltroTop(nombre);
+    }
+
+    // ---------------------------------
+
     // POST
     @PostMapping
     public ResponseEntity<MessageResponse> crearProducto(

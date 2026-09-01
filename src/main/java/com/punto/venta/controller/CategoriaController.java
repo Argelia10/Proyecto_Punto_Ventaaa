@@ -20,32 +20,40 @@ public class CategoriaController {
         this.categoriaService = categoriaService;
     }
 
-    // GET
+    // GET ALL
     @GetMapping
     public List<CategoriaDTO> getAllCategorias() {
         return categoriaService.findAll();
     }
 
+    // --- ENDPOINTS AÑADIDOS ---
+
+    @GetMapping("/mostrarActivos")
+    public ResponseEntity<List<CategoriaDTO>> mostrarActivos() {
+        return ResponseEntity.ok(categoriaService.obtenerActivos());
+    }
+
+    @GetMapping("/mostrarActivosFiltro")
+    public ResponseEntity<List<CategoriaDTO>> mostrarActivosFiltro(@RequestParam String nombre) {
+        return ResponseEntity.ok(categoriaService.obtenerActivosFiltro(nombre));
+    }
+
+    @GetMapping("/mostrarActivosFiltroTop")
+    public ResponseEntity<List<CategoriaDTO>> mostrarActivosFiltroTop(@RequestParam String nombre) {
+        return ResponseEntity.ok(categoriaService.obtenerActivosFiltroTop(nombre));
+    }
+
+    // --------------------------
+
     // POST
     @PostMapping
-    public ResponseEntity<MessageResponse> crearCategoria(
-            @RequestBody CategoriaDTO categoriaDTO) {
-
+    public ResponseEntity<MessageResponse> crearCategoria(@RequestBody CategoriaDTO categoriaDTO) {
         try {
-
             categoriaService.save(categoriaDTO);
-
-            return ResponseEntity.ok(
-                    new MessageResponse("Categoria creada con éxito")
-            );
-
+            return ResponseEntity.ok(new MessageResponse("Categoria creada con éxito"));
         } catch (Exception e) {
-
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new MessageResponse(
-                            "Error al crear la categoria: " + e.getMessage()
-                    ));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new MessageResponse("Error al crear la categoria: " + e.getMessage()));
         }
     }
 
@@ -54,80 +62,36 @@ public class CategoriaController {
     public ResponseEntity<MessageResponse> actualizarCategoria(
             @PathVariable Integer idCategoria,
             @RequestBody CategoriaDTO categoriaDTO) {
-
         try {
-
-            categoriaService.modificarCategoria(
-                    idCategoria,
-                    categoriaDTO
-            );
-
-            return ResponseEntity.ok(
-                    new MessageResponse(
-                            "Categoria actualizada con éxito"
-                    )
-            );
-
+            categoriaService.modificarCategoria(idCategoria, categoriaDTO);
+            return ResponseEntity.ok(new MessageResponse("Categoria actualizada con éxito"));
         } catch (Exception e) {
-
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new MessageResponse(
-                            "Error al actualizar la categoria: "
-                                    + e.getMessage()
-                    ));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new MessageResponse("Error al actualizar la categoria: " + e.getMessage()));
         }
     }
 
     // DELETE
     @DeleteMapping("/{idCategoria}")
-    public ResponseEntity<MessageResponse> eliminarCategoria(
-            @PathVariable Integer idCategoria) {
-
+    public ResponseEntity<MessageResponse> eliminarCategoria(@PathVariable Integer idCategoria) {
         try {
-
             categoriaService.eliminarCategoria(idCategoria);
-
-            return ResponseEntity.ok(
-                    new MessageResponse(
-                            "Categoria eliminada con éxito"
-                    )
-            );
-
+            return ResponseEntity.ok(new MessageResponse("Categoria eliminada con éxito"));
         } catch (Exception e) {
-
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new MessageResponse(
-                            "Error al eliminar la categoria: "
-                                    + e.getMessage()
-                    ));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new MessageResponse("Error al eliminar la categoria: " + e.getMessage()));
         }
     }
 
     // ANULAR
     @PutMapping("/anular/{idCategoria}")
-    public ResponseEntity<MessageResponse> anularCategoria(
-            @PathVariable Integer idCategoria) {
-
+    public ResponseEntity<MessageResponse> anularCategoria(@PathVariable Integer idCategoria) {
         try {
-
             categoriaService.anularCategoria(idCategoria);
-
-            return ResponseEntity.ok(
-                    new MessageResponse(
-                            "Categoria anulada con éxito"
-                    )
-            );
-
+            return ResponseEntity.ok(new MessageResponse("Categoria anulada con éxito"));
         } catch (Exception e) {
-
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new MessageResponse(
-                            "Error al anular la categoria: "
-                                    + e.getMessage()
-                    ));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new MessageResponse("Error al anular la categoria: " + e.getMessage()));
         }
     }
 }

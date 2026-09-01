@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PedidoService {
@@ -30,6 +31,31 @@ public class PedidoService {
     public List<Pedido> findAll() {
         return pedidoRepository.findAll();
     }
+
+    // --- MÉTODOS ACTUALIZADOS ---
+
+    public List<PedidoDTO> mostrarActivos() {
+        return pedidoRepository.findByEstadoTrue()
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<PedidoDTO> mostrarActivosFiltro(Boolean estadoPedido) {
+        return pedidoRepository.findByEstadoTrueAndEstadoPedido(estadoPedido)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<PedidoDTO> mostrarActivosFiltroTop(Boolean estadoPedido) {
+        return pedidoRepository.findTop2ByEstadoTrueAndEstadoPedido(estadoPedido)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // ------------------------
 
     // POST
     public Pedido save(PedidoDTO dto) {
@@ -123,5 +149,19 @@ public class PedidoService {
         pedidoExistente.setEstado(false);
 
         return pedidoRepository.save(pedidoExistente);
+    }
+
+    // CONVERTIDOR DTO
+    private PedidoDTO convertToDTO(Pedido p) {
+        PedidoDTO dto = new PedidoDTO();
+        dto.setIdPedido(p.getIdPedido());
+        dto.setFechaPedido(p.getFechaPedido());
+        dto.setEstadoPedido(p.getEstadoPedido());
+        dto.setTotal(p.getTotal());
+        dto.setEstado(p.getEstado());
+        if (p.getIdCliente() != null) {
+            dto.setIdCliente(p.getIdCliente().getIdCliente());
+        }
+        return dto;
     }
 }

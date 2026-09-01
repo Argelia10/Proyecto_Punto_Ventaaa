@@ -5,6 +5,7 @@ import com.punto.venta.entity.Cliente;
 import com.punto.venta.repository.ClienteRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,31 @@ public class ClienteService {
     public List<Cliente> findAll() {
         return clienteRepository.findAll();
     }
+
+    // --- MÉTODOS AÑADIDOS ---
+
+    public List<ClienteDTO> mostrarActivos() {
+        return clienteRepository.findByEstadoTrue()
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ClienteDTO> mostrarActivosFiltro(String nombre) {
+        return clienteRepository.findByEstadoTrueAndNombreContainingIgnoreCase(nombre)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ClienteDTO> mostrarActivosFiltroTop(String nombre) {
+        return clienteRepository.findTop2ByEstadoTrueAndNombreContainingIgnoreCase(nombre)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // ------------------------
 
     // POST
     public Cliente save(ClienteDTO dto) {
@@ -93,16 +119,16 @@ public class ClienteService {
     
     public ClienteDTO anular(Integer idCliente) {
 
-    Cliente clienteExistente = clienteRepository.findById(idCliente)
-            .orElseThrow(() -> new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Cliente no encontrado"
-            ));
+        Cliente clienteExistente = clienteRepository.findById(idCliente)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Cliente no encontrado"
+                ));
 
-    clienteExistente.setEstado(false);
+        clienteExistente.setEstado(false);
 
-    return convertToDTO(clienteRepository.save(clienteExistente));
-}
+        return convertToDTO(clienteRepository.save(clienteExistente));
+    }
 
     private ClienteDTO convertToDTO(Cliente cliente) {
 

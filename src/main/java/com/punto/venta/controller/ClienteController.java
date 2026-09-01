@@ -26,6 +26,25 @@ public class ClienteController {
         return clienteService.findAll();
     }
 
+    // --- NUEVOS ENDPOINTS AÑADIDOS ---
+
+    @GetMapping("/mostrarActivos")
+    public List<ClienteDTO> mostrarActivos() {
+        return clienteService.mostrarActivos();
+    }
+
+    @GetMapping("/mostrarActivosFiltro")
+    public List<ClienteDTO> mostrarActivosFiltro(@RequestParam String nombre) {
+        return clienteService.mostrarActivosFiltro(nombre);
+    }
+
+    @GetMapping("/mostrarActivosFiltroTop")
+    public List<ClienteDTO> mostrarActivosFiltroTop(@RequestParam String nombre) {
+        return clienteService.mostrarActivosFiltroTop(nombre);
+    }
+
+    // ---------------------------------
+
     @PostMapping
     public ResponseEntity<MessageResponse> createCliente(
             @RequestBody ClienteDTO clienteDTO) {
@@ -49,68 +68,71 @@ public class ClienteController {
                     ));
         }
     }
-   @PutMapping("/{idCliente}")
-public ResponseEntity<MessageResponse> actualizarCliente(
-        @PathVariable Integer idCliente,
-        @RequestBody ClienteDTO clienteDTO) {
 
-    try {
-        clienteService.actualizar(idCliente, clienteDTO);
+    @PutMapping("/{idCliente}")
+    public ResponseEntity<MessageResponse> actualizarCliente(
+            @PathVariable Integer idCliente,
+            @RequestBody ClienteDTO clienteDTO) {
 
-        return ResponseEntity.ok(
-                new MessageResponse("Cliente actualizado con éxito")
-        );
+        try {
+            clienteService.actualizar(idCliente, clienteDTO);
 
-    } catch (Exception e) {
+            return ResponseEntity.ok(
+                    new MessageResponse("Cliente actualizado con éxito")
+            );
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new MessageResponse(
-                        "Error al actualizar el cliente: " + e.getMessage()
-                ));
+        } catch (Exception e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new MessageResponse(
+                            "Error al actualizar el cliente: " + e.getMessage()
+                    ));
+        }
+    } 
+
+    @DeleteMapping("/{idCliente}")
+    public ResponseEntity<MessageResponse> eliminarCliente(
+            @PathVariable Integer idCliente) {
+
+        try {
+
+            clienteService.eliminar(idCliente);
+
+            return ResponseEntity.ok(
+                    new MessageResponse("Cliente eliminado con éxito")
+            );
+
+        } catch (Exception e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new MessageResponse(
+                            "Error al eliminar el cliente"
+                    ));
+        }
     }
-} 
-@DeleteMapping("/{idCliente}")
-public ResponseEntity<MessageResponse> eliminarCliente(
-        @PathVariable Integer idCliente) {
 
-    try {
+    @PutMapping("/anular/{idCliente}")
+    public ResponseEntity<MessageResponse> anularCliente(
+            @PathVariable Integer idCliente) {
 
-        clienteService.eliminar(idCliente);
+        try {
 
-        return ResponseEntity.ok(
-                new MessageResponse("Cliente eliminado con éxito")
-        );
+            clienteService.anular(idCliente);
 
-    } catch (Exception e) {
+            return ResponseEntity.ok(
+                    new MessageResponse("Cliente anulado con éxito")
+            );
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new MessageResponse(
-                        "Error al eliminar el cliente"
-                ));
+        } catch (Exception e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new MessageResponse(
+                            "Error al anular el cliente"
+                    ));
+        }
     }
-}
-@PutMapping("anular/{idCliente}")
-public ResponseEntity<MessageResponse> anularCliente(
-        @PathVariable Integer idCliente) {
-
-    try {
-
-        clienteService.anular(idCliente);
-
-        return ResponseEntity.ok(
-                new MessageResponse("Cliente anulado con éxito")
-        );
-
-    } catch (Exception e) {
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new MessageResponse(
-                        "Error al anular el cliente"
-                ));
-    }
-}
 
 }
